@@ -1,0 +1,125 @@
+  //inputDir = getDirectory("Choose Source Directory ");
+  //outputDir = getDirectory("Choose Destination Directory ");
+  
+  
+  // Modes: 1 - folder with volumes
+  //        2 - List of specified files 
+  //        3 - Every n-th starting from ... ending with ...
+  
+  mode = 3;
+  
+  inputDir = "G:\\DATA\\bamboo\\Input\\";
+  outputDir = "G:\\DATA\\bamboo\\Output\\diff_series_new\\";
+
+  ext = ".raw";
+  
+  // mode 1 parameters
+  fileMask = "vol_bg_460_350_860_";
+ //frameNumbers = newArray("16", "18", "20", "22", "24");
+  
+  // mode 3 parameters
+  maskLength = 2;
+  startIndex = 8;
+  endIndex = 10;
+  step = 2;
+  
+  setBatchMode(true);
+  
+  dimX = 460;
+  dimY = 350;
+  dimZ = 860;
+
+  scaleX = 0.75;
+  scaleY = 0.75;
+  scaleZ = 0.75;
+  
+  //raw_params = "little-endian use";
+  raw_params = "";
+  
+  
+ if (mode == 1) {
+    list = getFileList(inputDir); 
+ }
+ if (mode == 2) {
+    list = newArray(frameNumbers.length);
+    for (i=0; i<frameNumbers.length; i++) {
+         //fileName = fileMask + toString(frameNumbers[i]) + ext ;
+         fileName =  fileMask + frameNumbers[i] + ext ;
+         list[i] = fileName;
+    }
+}
+ if (mode == 3) {
+  j = 0;
+  list = newArray((endIndex  - startIndex) / step + 1 );
+  for (i=startIndex ; i<endIndex +1 ; i=i+step) {
+         fileName =  fileMask + pad(i, maskLength) + ext ;
+         list[j] = fileName;
+         j=j+1;
+    }
+ }
+ 
+  
+  //for (i=0; i<5; i++) {
+  for (i=0; i<list.length; i++) {
+  
+  
+//showMessage(list[i]);
+
+     showProgress(i+1, list.length);
+     
+     
+     run("Raw...", "open=" + inputDir + list[i]+ " image=[32-bit Real] width=" + toString(dimX) + " height=" + toString(dimY) + " offset=0 number=" + toString(dimZ) + " gap=0 " + raw_params);
+
+
+     image1 = getTitle;
+     image1ID = getImageID;
+
+
+     run("8-bit");
+     
+     //imageCalculator("Difference create stack", image1 , image2 );
+
+     //run("Specify...", "width=1500 height=1750 x=300 y=0");
+     //run("Crop");
+     
+     //selectImage(image1ID );
+     //close();
+     
+//--------------------------------------------------------
+// Scaling
+//--------------------------------------------------------
+
+  width = getWidth();
+  height = getHeight();
+  depth = nSlices;
+
+  width = width * scaleX;
+  height = height * scaleY;
+  depth = depth * scaleZ;
+
+   run("Scale...", "x="+toString(scaleX)+ " y=" + toString(scaleY)+ " z=" + toString(scaleZ) + " width=" + toString(width) + " height=" + toString(height) + " depth=" + toString(depth) + " interpolation=Bicubic process create title=volume");
+     
+    idImageRes = getImageID;
+
+    //selectImage(idImage);
+    //close();
+     
+        
+     saveAs("TIFF", outputDir+list[i]);
+     //saveAs("PGM", outputDir+list[i]);
+     //saveAs("Raw Data", outputDir+list[i]);
+     
+     run("Close All Without Saving");
+
+  }
+
+  showMessage("Finished");
+  
+ function pad(n, length) {
+      str = toString(n);
+      while (lengthOf(str)<length)
+          str = "0" + str;
+      return str;
+  } 
+  
+

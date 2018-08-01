@@ -1,0 +1,46 @@
+  inputDirImage = getDirectory("Choose Image Source Directory ");
+  inputDirResult = getDirectory("Choose Results Source Directory ");
+  //format = getFormat();
+  outputDir = getDirectory("Choose Destination Directory ");
+  
+  setBatchMode(true);
+
+  //open(path);
+  //imageFlat = File.getName(path);
+
+  listImage = getFileList(inputDirImage);
+  listResult = getFileList(inputDirResult);
+  
+  if (listImage.length != listResult.length) {
+    showMessage("Image and Result lists are not the same length");
+    return;
+  }
+  
+  
+  for (i=0; i<listImage.length; i++) {
+  
+     showProgress(i+1, listImage.length);
+     
+     // Open input image
+     open(inputDirImage+listImage[i]);
+     idImage = getImageID;
+     run("RGB Color");
+     
+     // Open result to blend with
+     open(inputDirResult+listResult[i]);    
+     resultTitle = getTitle();
+     //run("Red Hot");
+     //run("RGB Color");
+     
+     selectImage(idImage);
+     
+     run("Blend Images", "image=" + resultTitle + " fix weight=0.500");
+     //run("Blend Images", "image=image0343.pgm weight=0.500");
+     
+     saveAs("PGM", outputDir + "blend_" + listImage[i]);
+     
+     run("Close All Without Saving");
+     
+  }
+  
+  beep();

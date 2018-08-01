@@ -1,0 +1,27 @@
+  inputDir = getDirectory("Choose Image Source Directory ");
+  outputDir = getDirectory("Choose Destination Directory ");
+  
+  imageList = getFileList(inputDir);
+  
+  setBatchMode(true);
+
+       
+  for (i=0; i<imageList.length; i++) { 
+  //for (i=0; i<4; i++) {
+  
+    showProgress(i+1, imageList.length);
+    // Open image
+    open(inputDir+imageList[i]);
+
+    run("Anisotropic Diffusion 2D", "number=20 smoothings=1 keep=20 a1=0.50 a2=0.90 dt=20 edge=10");
+    
+
+    
+    saveAs("PGM", outputDir + "diff_" + imageList[i]);
+    
+    close();
+      
+  }       
+  
+
+  

@@ -1,0 +1,59 @@
+  inputDir = getDirectory("Choose Source Directory ");
+  //format = getFormat();
+  outputDir = getDirectory("Choose Destination Directory ");
+  
+  setBatchMode(true);
+
+  path = File.openDialog("Select a Flat Field image");
+  
+
+
+  list = getFileList(inputDir);
+  
+  for (i=0; i<5; i++) {
+  //for (i=0; i<list.length; i++) {
+  
+     open(path);
+     imageFlat = File.getName(path);
+  
+     showProgress(i+1, list.length);
+     open(inputDir+list[i]);
+     
+     
+     imageIn = getTitle;
+     idImage = getImageID;
+     
+     run("Specify...", "width=1400 height=1400 x=380 y=300");
+     run("Crop");
+     
+     imageCalculator("Divide 32-bit", imageIn, imageFlat);
+     
+     selectImage(idImage);
+     close();
+     
+     run("Scale...", "x=0.5 y=0.5 interpolate create title=Scaled");
+     
+     idImageRes = getImageID;
+     
+     //run("8-bit");
+     
+      
+     saveAs("PGM", outputDir+list[i]);
+     
+     run("Close All Without Saving");
+     
+
+  }
+  
+
+ 
+  function getFormat() {
+       formats = newArray("TIFF", "8-bit TIFF", "JPEG", "GIF", "PNG",
+          "PGM", "BMP", "FITS", "Text Image", "ZIP", "Raw");
+       Dialog.create("Batch Convert");
+       Dialog.addChoice("Convert to: ", formats, "TIFF");
+       Dialog.show();
+       return Dialog.getChoice();
+  }
+
+

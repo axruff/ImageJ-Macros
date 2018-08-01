@@ -1,0 +1,55 @@
+  inputDir = getDirectory("Choose Source Directory ");
+
+  outputDir = getDirectory("Choose Destination Directory ");
+  
+  setBatchMode(true);
+  
+
+  list = getFileList(inputDir);
+ 
+  //for (i=0; i<5; i++) {
+  for (i=0; i<list.length-1; i++) {
+  
+  
+     showProgress(i+1, list.length);
+
+     // open first image
+     open(inputDir+list[i]);
+      
+     imageFirst = getTitle;
+     idFirst = getImageID;
+
+     // open second image
+     open(inputDir+list[i+1]);
+      
+     imageSecond = getTitle;
+     idSecond = getImageID;
+     
+     imageCalculator("Subtract create 32-bit", imageSecond , imageFirst);
+
+     run("Scale...", "x=0.5 y=0.5 interpolate create title=Scaled");
+
+     //run("8-bit");
+
+     //run("Specify...", "width=1500 height=1750 x=300 y=0");
+     //run("Crop");
+     
+     //selectImage(idImage);
+     //close();
+     
+     
+     idImageRes = getImageID;
+     
+        
+     saveAs("TIFF", outputDir+list[i]);
+     //saveAs("PGM", outputDir+list[i]);
+     //saveAs("Raw Data", outputDir+list[i]);
+     
+     run("Close All Without Saving");
+
+
+  }
+
+  showMessage("Finished");
+  
+  

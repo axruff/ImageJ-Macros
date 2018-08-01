@@ -1,0 +1,80 @@
+  //format = getFormat();
+  tempDir = getDirectory("Choose Temporal Directory "); 
+  outputDir = getDirectory("Choose Results Directory ");
+
+  if (nSlices==1) exit("Stack required");
+
+
+  scaleX = 0.5;
+  scaleY = 0.5;
+  scaleZ = 0.5;
+
+
+  slices = nSlices;
+ 
+  setBatchMode(true);
+
+  width = getWidth();
+  height = getHeight();
+  depth = slices;
+  
+ 
+  id = getImageID;
+
+  for (i=1; i<= slices; i++) {
+
+      showProgress(i, slices);
+
+      selectImage(id);
+
+      setSlice(i);
+      run("Duplicate...", "title=temp");
+
+      run("Scale...", "x=" + toString(scaleX) + " y=" + toString(scaleY) + " interpolate create title=Scaled");
+
+      //run("16-bit");
+
+      saveAs("tif", tempDir + pad(i-1, 4));
+      close();
+
+      selectWindow("temp");
+      close();
+  }
+
+run("Image Sequence...", "open=" + tempDir + "\\0000.tif number=" + toString(slices)  + " starting=1 increment=1 scale=100 file=[] or=[] sort");
+//run("Scale...", "x=1.0 y=1.0 z=" + toString(scaleZ) + " interpolate create title=Scaled");
+
+
+width = width * scaleX;
+height = height * scaleY;
+depth = depth * scaleZ;
+
+run("Scale...", "x=1.0 y=1.0 z=" + toString(scaleZ) + " width=" + toString(width) + " height=" + toString(height) + " depth=" + toString(depth) + " interpolation=Bilinear process create title=volume");
+
+selectWindow("volume");
+
+run("Image Sequence... ", "format=TIFF name=res_ start=0 digits=4 save=" + outputDir + "res_0000.tif save="  + outputDir + "res_0000.tif");
+
+close();
+
+//run("Close All Without Saving");
+
+
+
+
+
+
+
+
+  showMessage("Finished");
+
+
+function pad(n, length) {
+      str = toString(n);
+      while (lengthOf(str)<length)
+          str = "0" + str;
+      return str;
+  }
+
+  
+  

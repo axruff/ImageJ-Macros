@@ -1,0 +1,42 @@
+//----------------------------------------------------------------------------
+//	Author: Alexey Ershov
+//  
+//	Desc: Macro performs a subtraction of stack operation. 
+//	Result is created using a new stack.
+//
+//-----------------------------------------------------------------------------	
+
+
+if (nSlices == 0) {
+            showMessage("Stack Tools", "The macro requires a stack");
+            return;
+}
+
+imageId = getImageID();
+
+
+setBatchMode(true);
+
+
+run("Duplicate...", "title=first duplicate range=1-" + toString(nSlices));
+setSlice(nSlices);
+run("Delete Slice");
+
+selectImage(imageId);
+
+run("Duplicate...", "title=second duplicate range=1-" + toString(nSlices));
+setSlice(1);
+run("Delete Slice");
+
+imageCalculator("Subtract create 32-bit stack", "second","first");
+
+
+selectWindow("first");
+close();
+
+
+selectWindow("second");
+close();
+
+setBatchMode("exit and display");
+

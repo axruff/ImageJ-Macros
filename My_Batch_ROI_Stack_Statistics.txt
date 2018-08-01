@@ -1,0 +1,34 @@
+  //inputDir = getDirectory("Choose Source Directory ");
+
+  outputDir = getDirectory("Choose results Destination Directory ");
+  
+
+  if (nSlices == 0) {
+            showMessage("Stack Tools", "The macro requires a stack");
+            return;
+  }
+  
+  setBatchMode(true);
+
+  rows = 2;
+  cols = 3;
+  
+  width = getWidth() / cols;
+  height = getHeight() / rows;
+
+
+  for (i=0; i<rows; i++) {
+    for (j=0; j<cols; j++) {
+    
+       makeRectangle(j*width, i*height, width, height);
+       run("Plot Z-axis Profile");
+       saveAs("Measurements", outputDir + "stat_" + toString(i+1) + "_" + toString(j+1) + ".txt");
+       close();
+        
+    }
+  }
+          
+
+  showMessage("Finished");
+  
+  

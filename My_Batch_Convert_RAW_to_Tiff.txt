@@ -1,0 +1,27 @@
+  inputDir = getDirectory("Choose Source Directory ");
+  outputDir = getDirectory("Choose Destination Directory ");
+  
+  setBatchMode(true);
+
+
+  list = getFileList(inputDir);
+ 
+  //for (i=0; i<2; i++) {
+  for (i=0; i<list.length; i++) {
+  
+  
+     showProgress(i+1, list.length);
+
+     run("Raw...", "open=" + inputDir + list[i] +" image=[32-bit Real] width=697 height=570 offset=0 number=1 gap=0 little-endian");      
+        
+     saveAs("TIFF", outputDir+list[i]);
+
+     
+     run("Close All Without Saving");
+
+
+  }
+
+  showMessage("Finished");
+  
+  
